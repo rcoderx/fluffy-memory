@@ -61,7 +61,7 @@ function submitAnswer(answer, twitterLink, recaptchaResponse, userAccount) {
     const answerHash = shaObj.getHash("HEX");
 
       // Send the answer hash, Twitter link, reCAPTCHA response, and user's Ethereum account to the server
-      fetch('https://fuzzy-couscous-production.up.railway.app', {
+      fetch('https://fuzzy-couscous-production.up.railway.app/submit-answer', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
