@@ -55,12 +55,13 @@ async function submitAnswer(answer, twitterLink, recaptchaResponse, userAccount)
     const answerHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     console.log('Submitting answer with userAccount:', userAccount);
     fetch('https://fuzzy-couscous-production.up.railway.app/submit-answer', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ answerHash, twitterLink, recaptchaResponse, userAccount }),
-    })
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ answerHash, twitterLink, recaptchaResponse, userAddress: userAccount }),
+})
+
     .then(response => response.json())
     .then(data => {
         alert(data.message);
