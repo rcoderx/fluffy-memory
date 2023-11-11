@@ -4,16 +4,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const twitterLinkInput = document.getElementById('twitterLink');
     let userAccount = null; // Variable to store the user's Ethereum account
 
-    answerForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const answer = document.getElementById('answer').value;
-        const twitterLink = twitterLinkInput.value;
-        const recaptchaResponse = grecaptcha.getResponse(); // Get reCAPTCHA response
-
-        submitAnswer(answer, twitterLink, recaptchaResponse, userAccount);
-    });
-
-
     shareButton.addEventListener('click', function() {
         const shareMessage = document.getElementById('shareMessage');
         shareMessage.style.display = 'block';
@@ -21,7 +11,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.execCommand('copy');
         shareMessage.style.display = 'none';
         alert('Message copied to clipboard!');
-
         shareButton.classList.add('disabled');
         shareButton.disabled = true;
     });
@@ -34,23 +23,28 @@ document.getElementById('connectWallet').addEventListener('click', function() {
             console.log('Connected account:', accounts[0]);
             userAccount = accounts[0]; // Store the connected account
             document.getElementById('submitAnswerButton').disabled = false;
-        
-            
-            console.log('userAccount set to:', userAccount); // Add this line
-            
+
+            console.log('userAccount set to:', userAccount);
 
             // Update UI to show the wallet is connected
             const connectWalletButton = document.getElementById('connectWallet');
             connectWalletButton.innerText = 'Wallet Connected';
             connectWalletButton.disabled = true;
-        
 
             // Display the user's wallet address
             const walletDisplay = document.createElement('div');
             walletDisplay.textContent = `Connected Wallet: ${userAccount}`;
             document.body.appendChild(walletDisplay);
 
-            // Optionally, update other parts of your UI here
+            // Set the answerForm event listener here
+            answerForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const answer = document.getElementById('answer').value;
+                const twitterLink = twitterLinkInput.value;
+                const recaptchaResponse = grecaptcha.getResponse(); 
+                submitAnswer(answer, twitterLink, recaptchaResponse, userAccount);
+            });
+
         })
         .catch(function(error) {
             console.error('Error connecting to wallet:', error);
@@ -65,7 +59,7 @@ async function submitAnswer(answer, twitterLink, recaptchaResponse, userAccount)
     const encoder = new TextEncoder();
     const data = encoder.encode(answer);
     const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
+    const hashArray = Array.from(new Uint8Array(hashBuffer)); 
     const answerHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     
     console.log('Submitting answer with userAccount:', userAccount);
