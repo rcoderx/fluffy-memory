@@ -54,14 +54,16 @@ document.getElementById('connectWallet').addEventListener('click', function() {
     }
 });
 
-function submitAnswer(answer, twitterLink, recaptchaResponse, userAccount) {
-    // Hash the answer using jsSHA
-    const shaObj = new jsSHA("SHA-256", "TEXT", { encoding: "UTF8" });
-    shaObj.update(answer);
-    const answerHash = shaObj.getHash("HEX");
+async function submitAnswer(answer, twitterLink, recaptchaResponse, userAccount) {
+    // Hash the answer using Web Crypto API
+    const encoder = new TextEncoder();
+    const data = encoder.encode(answer);
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
+    const answerHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 
-      // Send the answer hash, Twitter link, reCAPTCHA response, and user's Ethereum account to the server
-      fetch('https://fuzzy-couscous-production.up.railway.app/submit-answer', {
+    // Send the answer hash, Twitter link, reCAPTCHA response, and user's Ethereum account to the server
+    fetch('https://fuzzy-couscous-production.up.railway.app/submit-answer', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
