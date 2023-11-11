@@ -33,11 +33,17 @@ document.getElementById('connectWallet').addEventListener('click', function() {
         .then(function(accounts) {
             console.log('Connected account:', accounts[0]);
             userAccount = accounts[0]; // Store the connected account
+            document.getElementById('submitAnswerButton').disabled = false;
+        
+            
+            console.log('userAccount set to:', userAccount); // Add this line
+            
 
             // Update UI to show the wallet is connected
             const connectWalletButton = document.getElementById('connectWallet');
             connectWalletButton.innerText = 'Wallet Connected';
             connectWalletButton.disabled = true;
+        
 
             // Display the user's wallet address
             const walletDisplay = document.createElement('div');
@@ -61,6 +67,8 @@ async function submitAnswer(answer, twitterLink, recaptchaResponse, userAccount)
     const hashBuffer = await crypto.subtle.digest('SHA-256', data);
     const hashArray = Array.from(new Uint8Array(hashBuffer)); // convert buffer to byte array
     const answerHash = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    
+    console.log('Submitting answer with userAccount:', userAccount);
 
     // Send the answer hash, Twitter link, reCAPTCHA response, and user's Ethereum account to the server
     fetch('https://fuzzy-couscous-production.up.railway.app/submit-answer', {
